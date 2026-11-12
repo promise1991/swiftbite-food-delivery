@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html><head><title>SwiftBite 🍔</title><style>body{font-family:sans-serif;padding:20px} .card{border:1px solid #ddd;padding:15px;margin:10px;border-radius:10px} button{background:#ff6b00;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer} .green{background:#d4edda;padding:10px;border-radius:8px}</style></head>
+<body>
+<h1>🍔 SwiftBite — Chop Hot Hot</h1>
+<h2>Restaurants</h2><div id="restaurants"></div>
+<h2>Menu</h2><div id="menu"></div>
+<h2>Cart</h2><div id="cart">Cart empty</div>
+<button onclick="pay()">Pay Now</button>
+<div id="result"></div>
+<script>
+let cart=[];
+async function load(){
+  let r=await fetch("http://localhost:8007/restaurants"); let j=await r.json();
+  document.getElementById("restaurants").innerHTML=j.data.map(x=>`<div class="card"><b>${x.name}</b> ⭐${x.rating} — ${x.delivery_time} — Fee ₦${x.fee} <button onclick="loadMenu(${x.id})">View Menu</button></div>`).join("");
+}
+async function loadMenu(id){
+  let r=await fetch(`http://localhost:8009/menu/${id}`); let j=await r.json();
+  document.getElementById("menu").innerHTML=j.data.map(x=>`<div class="card">${x.name} — ₦${x.price}<br>${x.desc}<br><button onclick="add('${x.name}',${x.price})">Add to Cart</button></div>`).join("");
+}
+function add(name,price){ cart.push({name,price}); document.getElementById("cart").innerHTML=cart.map(c=>`${c.name} ₦${c.price}`).join("<br>")+"<br><b>Total: ₦"+cart.reduce((a,c)=>a+c.price,0)+"</b>"; }
+async function pay(){
+  let total=cart.reduce((a,c)=>a+c.price,0)+1000;
+  let o=await fetch("http://localhost:8005/order/create",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({user_id:1,items:cart,total,address:"2 Matthew Ojo Street"})}).then(r=>r.json());
+  let p=await fetch("http://localhost:8006/payment/confirm",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({payment_id:o.payment_id,card:"4084000000000000"})}).then(r=>r.json());
+  document.getElementById("result").innerHTML=`<div class="green">✅ Payment ${p.status}! Order #${o.order_id} — Total ₦${total}. Restaurant don get order, email go come later.</div>`;
+}
+load();
+</script></body></html>
