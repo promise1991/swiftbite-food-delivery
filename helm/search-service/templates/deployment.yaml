@@ -12,8 +12,13 @@ spec:
       labels:
         app: search-service
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets }}
       containers:
         - name: search-service
-          image: search-service:v1
+          image: "{{ .Values.global.imageRegistry }}/search-service:{{ .Values.global.imageTag }}"
           ports:
             - containerPort: 8008
+          env:
+            - name: PORT
+              value: "8008"

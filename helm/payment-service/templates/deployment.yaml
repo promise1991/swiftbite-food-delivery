@@ -12,8 +12,13 @@ spec:
       labels:
         app: payment-service
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets }}
       containers:
         - name: payment-service
-          image: payment-service:v1
+          image: "{{ .Values.global.imageRegistry }}/payment-service:{{ .Values.global.imageTag }}"
           ports:
             - containerPort: 8006
+          env:
+            - name: PORT
+              value: "8006"

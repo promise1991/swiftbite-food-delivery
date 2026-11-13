@@ -12,8 +12,13 @@ spec:
       labels:
         app: auth-service
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets }}
       containers:
         - name: auth-service
-          image: auth-service:v1
+          image: "{{ .Values.global.imageRegistry }}/auth-service:{{ .Values.global.imageTag }}"
           ports:
             - containerPort: 8001
+          env:
+            - name: PORT
+              value: "8001"

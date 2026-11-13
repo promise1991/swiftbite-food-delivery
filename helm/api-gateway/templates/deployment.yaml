@@ -12,8 +12,13 @@ spec:
       labels:
         app: api-gateway
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets }}
       containers:
         - name: api-gateway
-          image: api-gateway:v1
+          image: "{{ .Values.global.imageRegistry }}/api-gateway:{{ .Values.global.imageTag }}"
           ports:
             - containerPort: 8000
+          env:
+            - name: PORT
+              value: "8000"

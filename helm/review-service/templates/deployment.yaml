@@ -12,8 +12,13 @@ spec:
       labels:
         app: review-service
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets }}
       containers:
         - name: review-service
-          image: review-service:v1
+          image: "{{ .Values.global.imageRegistry }}/review-service:{{ .Values.global.imageTag }}"
           ports:
             - containerPort: 8011
+          env:
+            - name: PORT
+              value: "8011"

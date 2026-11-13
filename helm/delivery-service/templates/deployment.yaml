@@ -12,8 +12,13 @@ spec:
       labels:
         app: delivery-service
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets }}
       containers:
         - name: delivery-service
-          image: delivery-service:v1
+          image: "{{ .Values.global.imageRegistry }}/delivery-service:{{ .Values.global.imageTag }}"
           ports:
             - containerPort: 8012
+          env:
+            - name: PORT
+              value: "8012"

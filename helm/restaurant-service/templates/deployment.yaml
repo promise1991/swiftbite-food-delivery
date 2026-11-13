@@ -12,8 +12,13 @@ spec:
       labels:
         app: restaurant-service
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.global.imagePullSecrets }}
       containers:
         - name: restaurant-service
-          image: restaurant-service:v1
+          image: "{{ .Values.global.imageRegistry }}/restaurant-service:{{ .Values.global.imageTag }}"
           ports:
             - containerPort: 8007
+          env:
+            - name: PORT
+              value: "8007"

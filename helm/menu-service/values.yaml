@@ -1,1 +1,5 @@
+global:
+  imageRegistry: ""
+  imageTag: v1
+  imagePullSecrets: ecr-secret
 port: 8009
