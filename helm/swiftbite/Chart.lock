@@ -1,0 +1,39 @@
+dependencies:
+- name: auth-service
+  repository: file://../auth-service
+  version: 0.1.0
+- name: user-service
+  repository: file://../user-service
+  version: 0.1.0
+- name: order-service
+  repository: file://../order-service
+  version: 0.1.0
+- name: payment-service
+  repository: file://../payment-service
+  version: 0.1.0
+- name: restaurant-service
+  repository: file://../restaurant-service
+  version: 0.1.0
+- name: search-service
+  repository: file://../search-service
+  version: 0.1.0
+- name: menu-service
+  repository: file://../menu-service
+  version: 0.1.0
+- name: notification-service
+  repository: file://../notification-service
+  version: 0.1.0
+- name: review-service
+  repository: file://../review-service
+  version: 0.1.0
+- name: delivery-service
+  repository: file://../delivery-service
+  version: 0.1.0
+- name: analytics-service
+  repository: file://../analytics-service
+  version: 0.1.0
+- name: api-gateway
+  repository: file://../api-gateway
+  version: 0.1.0
+digest: sha256:c9457b98f0d0f196083e3a10f8aee4a56b62a2aa17804c6cfbcf3098c1a435cf
+generated: "2026-11-13T14:13:32.720035269+01:00"
