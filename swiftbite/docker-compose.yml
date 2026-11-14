@@ -1,0 +1,17 @@
+# Full local stack: docker compose up --build   ->  open http://localhost:3000
+services:
+  rabbitmq: { image: "rabbitmq:3-management", ports: ["5672:5672", "15672:15672"] }
+  api-gateway: { build: ./api-gateway, ports: ["8000:8000"] }
+  auth-service: { build: ./auth-service }
+  user-service: { build: ./user-service }
+  restaurant-service: { build: ./restaurant-service }
+  menu-service: { build: ./menu-service }
+  cart-service: { build: ./cart-service }
+  review-service: { build: ./review-service }
+  search-service: { build: ./search-service }
+  analytics-service: { build: ./analytics-service }
+  delivery-service: { build: ./delivery-service }
+  order-service: { build: ./order-service, depends_on: [rabbitmq] }
+  payment-service: { build: ./payment-service, depends_on: [rabbitmq] }
+  notification-service: { build: ./notification-service, depends_on: [rabbitmq] }
+  frontend: { build: ./frontend, environment: { API_GATEWAY_URL: "http://api-gateway:8000" }, ports: ["3000:80"] }
