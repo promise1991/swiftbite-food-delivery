@@ -1,0 +1,5 @@
+SwiftBite installed in namespace {{ .Release.Namespace }}.
+
+Watch pods:   kubectl get pods -n {{ .Release.Namespace }} -w
+Website:      kubectl port-forward -n {{ .Release.Namespace }} svc/frontend 3000:80    ->  http://localhost:3000
+Gateway:      kubectl port-forward -n {{ .Release.Namespace }} svc/api-gateway 8000:8000   ->  curl localhost:8000/health

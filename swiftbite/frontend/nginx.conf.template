@@ -1,13 +1,19 @@
 server {
   listen 80;
   root /usr/share/nginx/html;
+  resolver ${NGINX_LOCAL_RESOLVERS} valid=10s ipv6=off;
+
   location = /healthz { return 200 "ok"; }
+
   location /api/ {
-    proxy_pass ${API_GATEWAY_URL}/;
+    set $gateway ${API_GATEWAY_URL};
+    rewrite ^/api/(.*)$ /$1 break;
+    proxy_pass $gateway;
     proxy_http_version 1.1;
     proxy_set_header Host $host;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
   }
+
   location / { try_files $uri /index.html; }
 }

@@ -1,0 +1,7 @@
+image: rabbitmq:3-management
+auth:
+  user: guest
+  password: guest        # change before any shared cluster
+resources:
+  requests: { cpu: 100m, memory: 256Mi }
+  limits: { cpu: 500m, memory: 512Mi }

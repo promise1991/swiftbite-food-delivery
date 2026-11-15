@@ -1,0 +1,16 @@
+image:
+  repository: swiftbite/order-service   # full image = <global.image.registry>/<repository>:<tag>
+  tag: ""                        # empty = global.image.tag
+replicaCount: 1                  # keep at 1: state is in memory
+service:
+  type: ClusterIP
+  port: 8005
+probes:
+  liveness: /health
+  readiness: /ready
+env: {}
+resources:
+  requests: { cpu: 20m, memory: 64Mi }
+  limits: { cpu: 300m, memory: 256Mi }
+rabbit:
+  secretName: rabbitmq-credentials

@@ -1,0 +1,67 @@
+apiVersion: v2
+name: swiftbite
+description: Umbrella chart for the SwiftBite food delivery platform
+type: application
+version: 0.1.0
+appVersion: "v1"
+dependencies:
+  - name: rabbitmq
+    version: 0.1.0
+    repository: file://../charts/rabbitmq
+    condition: rabbitmq.enabled
+  - name: frontend
+    version: 0.1.0
+    repository: file://../charts/frontend
+    condition: frontend.enabled
+  - name: api-gateway
+    version: 0.1.0
+    repository: file://../charts/api-gateway
+    condition: api-gateway.enabled
+  - name: auth-service
+    version: 0.1.0
+    repository: file://../charts/auth-service
+    condition: auth-service.enabled
+  - name: user-service
+    version: 0.1.0
+    repository: file://../charts/user-service
+    condition: user-service.enabled
+  - name: cart-service
+    version: 0.1.0
+    repository: file://../charts/cart-service
+    condition: cart-service.enabled
+  - name: order-service
+    version: 0.1.0
+    repository: file://../charts/order-service
+    condition: order-service.enabled
+  - name: payment-service
+    version: 0.1.0
+    repository: file://../charts/payment-service
+    condition: payment-service.enabled
+  - name: restaurant-service
+    version: 0.1.0
+    repository: file://../charts/restaurant-service
+    condition: restaurant-service.enabled
+  - name: search-service
+    version: 0.1.0
+    repository: file://../charts/search-service
+    condition: search-service.enabled
+  - name: menu-service
+    version: 0.1.0
+    repository: file://../charts/menu-service
+    condition: menu-service.enabled
+  - name: review-service
+    version: 0.1.0
+    repository: file://../charts/review-service
+    condition: review-service.enabled
+  - name: notification-service
+    version: 0.1.0
+    repository: file://../charts/notification-service
+    condition: notification-service.enabled
+  - name: delivery-service
+    version: 0.1.0
+    repository: file://../charts/delivery-service
+    condition: delivery-service.enabled
+  - name: analytics-service
+    version: 0.1.0
+    repository: file://../charts/analytics-service
+    condition: analytics-service.enabled

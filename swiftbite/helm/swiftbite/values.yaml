@@ -1,0 +1,26 @@
+# Values shared by every subchart. Override any subchart with its own key, e.g.
+#   order-service: { replicaCount: 1, env: { LOG_LEVEL: debug } }
+global:
+  clusterDomain: cluster.local
+  image:
+    registry: ""            # REQUIRED: <account>.dkr.ecr.<region>.amazonaws.com (pass with --set)
+    tag: v1
+    pullPolicy: IfNotPresent
+  imagePullSecrets:
+    - ecr-creds             # created by scripts/ecr-secret.sh
+
+rabbitmq: { enabled: true }
+frontend: { enabled: true }
+api-gateway: { enabled: true }
+auth-service: { enabled: true }
+user-service: { enabled: true }
+cart-service: { enabled: true }
+order-service: { enabled: true }
+payment-service: { enabled: true }
+restaurant-service: { enabled: true }
+search-service: { enabled: true }
+menu-service: { enabled: true }
+review-service: { enabled: true }
+notification-service: { enabled: true }
+delivery-service: { enabled: true }
+analytics-service: { enabled: true }

@@ -1,5 +1,0 @@
-global:
-  imageRegistry: ""
-  imageTag: v1
-  imagePullSecrets: ecr-secret
-  namespace: swiftbite
