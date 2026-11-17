@@ -11,20 +11,22 @@ echo "=== STEP 1: ECR LOGIN ==="
 aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REGISTRY
 
 echo "=== STEP 2: BUILD & PUSH 12 SERVICES ==="
-for svc in api-gateway auth-service user-service order-service payment-service restaurant-service search-service menu-service notification-service review-service delivery-service analytics-service; do
+for s in frontend api-gateway auth-service user-service cart-service order-service payment-service \
+         restaurant-service search-service menu-service review-service notification-service \
+         delivery-service analytics-service; do
   
   echo ""
-  echo ">>> Building $svc:v1"
-  docker build -t $svc:v1 ./services/$svc
+  echo ">>> Building $s:v1"
+  docker build -t $s:v1 ./swiftbite/$s
   
-  echo ">>> Tagging $svc for ECR"
-  docker tag $svc:v1 $REGISTRY/$svc:v1
+  echo ">>> Tagging $s for ECR"
+  docker tag $s:v1 $REGISTRY/$s:v1
   
   echo ">>> Creating ECR repo if not exists"
-  aws ecr describe-repositories --repository-names $svc --region $REGION 2>&1 >/dev/null ||   aws ecr create-repository --repository-name $svc --region $REGION --image-scanning-configuration scanOnPush=true
+  aws ecr describe-repositories --repository-names $s --region $REGION 2>&1 >/dev/null ||   aws ecr create-repository --repository-name $s --region $REGION --image-scanning-configuration scanOnPush=true
 
-  echo ">>> Pushing $REGISTRY/$svc:v1"
-  docker push $REGISTRY/$svc:v1
+  echo ">>> Pushing $REGISTRY/$s:v1"
+  docker push $REGISTRY/$s:v1
 done
 
 echo ""

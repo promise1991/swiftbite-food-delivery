@@ -1,0 +1,19 @@
+image:
+  repository: frontend   # full image = <global.image.registry>/<repository>:<tag>
+  tag: ""                        # empty = global.image.tag
+replicaCount: 1                  # keep at 1: state is in memory
+service:
+  type: NodePort
+  port: 80
+  nodePort: 30080
+probes:
+  liveness: /healthz
+  readiness: /healthz
+env:
+  NGINX_ENTRYPOINT_LOCAL_RESOLVERS: "1"
+resources:
+  requests: { cpu: 20m, memory: 64Mi }
+  limits: { cpu: 300m, memory: 256Mi }
+gateway:
+  name: api-gateway
+  port: 8000
