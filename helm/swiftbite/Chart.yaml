@@ -65,3 +65,7 @@ dependencies:
     version: 0.1.0
     repository: file://../charts/analytics-service
     condition: analytics-service.enabled
+  - name: migrations
+    version: 0.1.0
+    repository: file://../charts/migrations
+    condition: migrations.enabled

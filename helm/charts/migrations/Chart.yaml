@@ -1,0 +1,6 @@
+apiVersion: v2
+name: migrations
+description: Liquibase schema migrations, run as a Helm hook before every install/upgrade
+type: application
+version: 0.1.0
+appVersion: "4.29.2"

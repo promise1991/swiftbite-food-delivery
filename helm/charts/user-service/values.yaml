@@ -7,8 +7,11 @@ service:
   port: 8002
 probes:
   liveness: /health
-  readiness: /health
+  readiness: /ready
 env: {}
 resources:
   requests: { cpu: 20m, memory: 64Mi }
   limits: { cpu: 300m, memory: 256Mi }
+database:
+  secretName: db-credentials
+  secretKey: USER_DATABASE_URL

@@ -7,7 +7,7 @@ service:
   port: 8013
 probes:
   liveness: /health
-  readiness: /health
+  readiness: /ready
 env: {}
 resources:
   requests: { cpu: 20m, memory: 64Mi }

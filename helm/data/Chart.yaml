@@ -1,0 +1,6 @@
+apiVersion: v2
+name: swiftbite-data
+description: Dev stand-in for RDS and ElastiCache (Postgres + Redis). Not used on EKS.
+type: application
+version: 0.1.0
+appVersion: "16"

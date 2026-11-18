@@ -1,0 +1,23 @@
+# DEV ONLY passwords. On EKS these come from AWS Secrets Manager, never from git.
+postgres:
+  image: postgres:16-alpine
+  superuserPassword: dev-superuser-pw
+  storage: 1Gi
+  resources:
+    requests: { cpu: 50m, memory: 128Mi }
+    limits: { cpu: 500m, memory: 512Mi }
+redis:
+  image: redis:7-alpine
+  resources:
+    requests: { cpu: 20m, memory: 32Mi }
+    limits: { cpu: 200m, memory: 128Mi }
+# One database (<name>db) and one owner role (<name>_user) per service.
+databases:
+  auth:       { password: dev-auth-pw }
+  user:       { password: dev-user-pw }
+  restaurant: { password: dev-restaurant-pw }
+  menu:       { password: dev-menu-pw }
+  order:      { password: dev-order-pw }
+  payment:    { password: dev-payment-pw }
+  review:     { password: dev-review-pw }
+  delivery:   { password: dev-delivery-pw }

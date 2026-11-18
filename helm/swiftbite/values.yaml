@@ -4,7 +4,7 @@ global:
   clusterDomain: cluster.local
   image:
     registry: 293160392232.dkr.ecr.eu-north-1.amazonaws.com            # REQUIRED: <account>.dkr.ecr.<region>.amazonaws.com (pass with --set)
-    tag: v3
+    tag: v4
     pullPolicy: IfNotPresent
   imagePullSecrets:
     - ecr-secret             # created by scripts/ecr-secret.sh
@@ -29,3 +29,5 @@ ingress:
   enabled: true
   className: nginx
   host: swiftbite.local
+
+migrations: { enabled: true }

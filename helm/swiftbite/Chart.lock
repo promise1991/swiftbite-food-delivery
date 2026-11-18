@@ -44,5 +44,8 @@ dependencies:
 - name: analytics-service
   repository: file://../charts/analytics-service
   version: 0.1.0
-digest: sha256:fa55ff79ae0c3692b4325f5cb6749baa1e77dc392f8d754f0e863b0ee8a57dcd
-generated: "2026-11-16T16:47:42.435206611+01:00"
+- name: migrations
+  repository: file://../charts/migrations
+  version: 0.1.0
+digest: sha256:33d8196d5e73a5173c84c7a061eaf0463af8c43f980adfd7e446789e889039b0
+generated: "2026-11-18T14:13:07.883090241+01:00"

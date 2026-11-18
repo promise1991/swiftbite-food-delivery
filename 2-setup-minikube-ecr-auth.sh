@@ -33,7 +33,7 @@ echo "For auto-refresh in prod, install: https://github.com/upmc-enterprises/reg
 # Test pull
 echo ""
 echo "Testing pull from ECR..."
-docker pull $REGISTRY/api-gateway:v3 || true
+docker pull $REGISTRY/api-gateway:v4 || true
 
 echo ""
 echo "Next: Run ./3-deploy-with-ecr.sh $ACCOUNT_ID $REGION"

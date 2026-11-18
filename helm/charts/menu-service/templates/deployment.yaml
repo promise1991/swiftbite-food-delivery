@@ -32,7 +32,7 @@ spec:
           imagePullPolicy: {{ include "svc.pullPolicy" . }}
           ports:
             - containerPort: {{ .Values.service.port }}
-          {{- if or .Values.env .Values.rabbit .Values.gateway }}
+          {{- if or .Values.env .Values.rabbit .Values.gateway .Values.database }}
           env:
             {{- range $k, $v := .Values.env }}
             - name: {{ $k }}
@@ -42,6 +42,13 @@ spec:
             # nginx's resolver ignores search domains, so it needs the full service name
             - name: API_GATEWAY_URL
               value: "http://{{ .Values.gateway.name }}.{{ .Release.Namespace }}.svc.{{ (.Values.global | default dict).clusterDomain | default "cluster.local" }}:{{ .Values.gateway.port }}"
+            {{- end }}
+            {{- if .Values.database }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.secretName }}
+                  key: {{ .Values.database.secretKey }}
             {{- end }}
             {{- if .Values.rabbit }}
             - name: RABBITMQ_URL

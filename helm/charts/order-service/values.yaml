@@ -7,10 +7,13 @@ service:
   port: 8005
 probes:
   liveness: /health
-  readiness: /health
+  readiness: /ready
 env: {}
 resources:
   requests: { cpu: 20m, memory: 64Mi }
   limits: { cpu: 300m, memory: 256Mi }
 rabbit:
   secretName: rabbitmq-credentials
+database:
+  secretName: db-credentials
+  secretKey: ORDER_DATABASE_URL

@@ -1,0 +1,5 @@
+image: liquibase/liquibase:4.29.2
+dbHost: postgres        # on EKS: the RDS endpoint
+secretName: db-credentials
+contexts: dev           # dev = also load sample data. Use "prod" on real environments.
+databases: [auth, user, restaurant, menu, order, payment, review, delivery]

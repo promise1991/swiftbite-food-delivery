@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+  labels: { app.kubernetes.io/part-of: swiftbite }
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 8          # keeps retrying while the database is still starting
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: liquibase
+          image: {{ .Values.image }}
+          envFrom:
+            - secretRef: { name: {{ .Values.secretName }} }
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              for s in {{ join " " .Values.databases }}; do
+                S=$(echo "$s" | tr 'a-z' 'A-Z')
+                echo ">>> migrating ${s}db"
+                /liquibase/liquibase \
+                  --url="jdbc:postgresql://{{ .Values.dbHost }}:5432/${s}db" \
+                  --username="$(printenv ${S}_DB_USER)" --password="$(printenv ${S}_DB_PASSWORD)" \
+                  --search-path=/liquibase/changelog --changelog-file="${s}.sql" \
+                  --contexts="{{ .Values.contexts }}" update
+              done
+          volumeMounts:
+            - { name: changelogs, mountPath: /liquibase/changelog }
+      volumes:
+        - name: changelogs
+          configMap: { name: db-changelogs }
