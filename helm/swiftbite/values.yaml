@@ -3,11 +3,11 @@
 global:
   clusterDomain: cluster.local
   image:
-    registry: ""            # REQUIRED: <account>.dkr.ecr.<region>.amazonaws.com (pass with --set)
-    tag: v1
+    registry: 293160392232.dkr.ecr.eu-north-1.amazonaws.com            # REQUIRED: <account>.dkr.ecr.<region>.amazonaws.com (pass with --set)
+    tag: v3
     pullPolicy: IfNotPresent
   imagePullSecrets:
-    - ecr-creds             # created by scripts/ecr-secret.sh
+    - ecr-secret             # created by scripts/ecr-secret.sh
 
 rabbitmq: { enabled: true }
 frontend: { enabled: true }
@@ -24,3 +24,8 @@ review-service: { enabled: true }
 notification-service: { enabled: true }
 delivery-service: { enabled: true }
 analytics-service: { enabled: true }
+
+ingress:
+  enabled: true
+  className: nginx
+  host: swiftbite.local

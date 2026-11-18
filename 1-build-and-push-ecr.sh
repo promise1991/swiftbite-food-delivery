@@ -16,17 +16,17 @@ for s in frontend api-gateway auth-service user-service cart-service order-servi
          delivery-service analytics-service; do
   
   echo ""
-  echo ">>> Building $s:v1"
-  docker build -t $s:v1 ./swiftbite/$s
+  echo ">>> Building $s:v3"
+  docker build -t $s:v3 ./swiftbite/$s
   
   echo ">>> Tagging $s for ECR"
-  docker tag $s:v1 $REGISTRY/$s:v1
+  docker tag $s:v3 $REGISTRY/$s:v3
   
   echo ">>> Creating ECR repo if not exists"
   aws ecr describe-repositories --repository-names $s --region $REGION 2>&1 >/dev/null ||   aws ecr create-repository --repository-name $s --region $REGION --image-scanning-configuration scanOnPush=true
 
-  echo ">>> Pushing $REGISTRY/$s:v1"
-  docker push $REGISTRY/$s:v1
+  echo ">>> Pushing $REGISTRY/$s:v3"
+  docker push $REGISTRY/$s:v3
 done
 
 echo ""
