@@ -2,35 +2,34 @@
 set -e
 # PROD FLOW: Build -> Tag -> Push to ECR
 # Usage: ./1-build-and-push-ecr.sh 293160392232 eu-north-1
+# Tags come from versions.env - SINGLE SOURCE OF TRUTH. Update ONLY versions.env for new versions.
 
 ACCOUNT_ID=${1:?ERROR: Provide AWS Account ID -> ./1-build-and-push-ecr.sh 293160392232 eu-north-1}
 REGION=${2:-eu-north-1}
 REGISTRY="$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com"
 
-echo "=== STEP 1: ECR LOGIN ==="
-【entity-aws¦canonical_name=AWS】 ecr get-login-password --region $REGION | docker login --username 【entity-AWS¦canonical_name=AWS】 --password-stdin $REGISTRY
+# Load versions
+source ./versions.env
 
-echo "=== STEP 2: BUILD & PUSH - LATEST TAGS ==="
-# Latest known-good tags per service (Nov 19)
-# frontend v7 = food photos + sticky nav
-# order v6 = delivery_address + phone + notes
-# review v5 = Dockerfile fix
-# others v4 = stable
+echo "=== STEP 1: ECR LOGIN ==="
+aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REGISTRY
+
+echo "=== STEP 2: BUILD & PUSH - Tags from versions.env ==="
 declare -A TAGS=(
-  [frontend]=v7
-  [api-gateway]=v4
-  [auth-service]=v4
-  [user-service]=v4
-  [cart-service]=v4
-  [order-service]=v6
-  [payment-service]=v4
-  [restaurant-service]=v4
-  [search-service]=v4
-  [menu-service]=v4
-  [review-service]=v5
-  [notification-service]=v4
-  [delivery-service]=v4
-  [analytics-service]=v4
+  [frontend]=$FRONTEND_TAG
+  [api-gateway]=$API_GATEWAY_TAG
+  [auth-service]=$AUTH_TAG
+  [user-service]=$USER_TAG
+  [cart-service]=$CART_TAG
+  [order-service]=$ORDER_TAG
+  [payment-service]=$PAYMENT_TAG
+  [restaurant-service]=$RESTAURANT_TAG
+  [search-service]=$SEARCH_TAG
+  [menu-service]=$MENU_TAG
+  [review-service]=$REVIEW_TAG
+  [notification-service]=$NOTIFICATION_TAG
+  [delivery-service]=$DELIVERY_TAG
+  [analytics-service]=$ANALYTICS_TAG
 )
 
 for s in frontend api-gateway auth-service user-service cart-service order-service payment-service \
@@ -51,4 +50,4 @@ done
 echo ""
 echo "=== DONE ==="
 echo "All images pushed to: $REGISTRY"
-echo "frontend:v7 order:v6 review:v5 others:v4"
+echo "Tags from versions.env: frontend=$FRONTEND_TAG order=$ORDER_TAG review=$REVIEW_TAG"
