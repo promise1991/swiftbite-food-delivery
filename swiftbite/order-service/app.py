@@ -16,7 +16,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 DELIVERY_URL = os.getenv("DELIVERY_URL", "http://delivery-service:8012")
 STATUSES = ["PLACED", "ACCEPTED", "PICKED_UP", "DELIVERED", "CANCELLED"]
 EVENT = {"PLACED": "order.placed", "ACCEPTED": "order.accepted", "PICKED_UP": "delivery.picked_up", "DELIVERED": "order.delivered"}
-COLS = "id, user_id, restaurant_id, total::float AS total, status, created_at"
+COLS = "id, user_id, restaurant_id, total::float AS total, status, created_at, delivery_address, phone"
 
 class Line(BaseModel):
     id: int | None = None
@@ -29,6 +29,9 @@ class NewOrder(BaseModel):
     restaurant_id: int | None = None
     items: list[Line] = []
     total: float = 0
+    delivery_address: str = ""
+    phone: str = ""
+    note: str = ""
 class Status(BaseModel):
     status: str
 
@@ -38,7 +41,11 @@ def with_items(c, orders):
                      "WHERE order_id = ANY(%s) ORDER BY id", (ids,)).fetchall() if ids else []
     by = {}
     for r in rows: by.setdefault(r.pop("order_id"), []).append(r)
+    notes = c.execute("SELECT order_id, note FROM order_notes WHERE order_id = ANY(%s) ORDER BY id", (ids,)).fetchall() if ids else []
+    by_note = {}
+    for n in notes: by_note.setdefault(n["order_id"], []).append(n["note"])
     return [{**o, "order_id": o["id"], "items": by.get(o["id"], []),
+             "notes": by_note.get(o["id"], []),
              "items_summary": ", ".join(f"{i['qty']} × {i['name']}" for i in by.get(o["id"], []))} for o in orders]
 
 @app.get("/health")
@@ -50,11 +57,13 @@ def ready(): return db.check_ready()
 def create(o: NewOrder):
     total = o.total or sum(i.price * i.qty for i in o.items)
     with db.pool.connection() as c:      # one transaction: the order and its items are saved together or not at all
-        row = c.execute(f"INSERT INTO orders (user_id, restaurant_id, total) VALUES (%s, %s, %s) RETURNING {COLS}",
-                        (o.user_id, o.restaurant_id, total)).fetchone()
+        row = c.execute(f"INSERT INTO orders (user_id, restaurant_id, total, delivery_address, phone) VALUES (%s, %s, %s, %s, %s) RETURNING {COLS}",
+                        (o.user_id, o.restaurant_id, total, o.delivery_address or None, o.phone or None)).fetchone()
         for i in o.items:
             c.execute("INSERT INTO order_items (order_id, item_id, name, price, qty) VALUES (%s, %s, %s, %s, %s)",
                       (row["id"], i.item_id or i.id or 0, i.name, i.price, i.qty))
+        if o.note:
+            c.execute("INSERT INTO order_notes (order_id, note) VALUES (%s, %s)", (row["id"], o.note))
         order = with_items(c, [row])[0]
     publish("order.placed", {"order_id": order["id"], "email": "customer@example.com"})
     return order
