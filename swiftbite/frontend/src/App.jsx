@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { api, session, naira, SAMPLE_RESTAURANTS, SAMPLE_MENU } from "./api.js";
 
+// Food photos by cuisine - Unsplash free images, no upload needed
+const FOOD_IMG = {
+  "African food": "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80&auto=format&fit=crop",
+  "Pasta": "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=800&q=80&auto=format&fit=crop",
+  "Fast food": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80&auto=format&fit=crop",
+  "Salad": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80&auto=format&fit=crop",
+  "Pastries": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80&auto=format&fit=crop",
+  "Asian food": "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&q=80&auto=format&fit=crop",
+};
+const foodImg = (r) => FOOD_IMG[r.cuisine] || FOOD_IMG["African food"];
+
+
 const useHash = () => {
   const [h, setH] = useState(location.hash.slice(1));
   useEffect(() => { const f = () => setH(location.hash.slice(1)); addEventListener("hashchange", f); return () => removeEventListener("hashchange", f); }, []);
@@ -145,7 +157,7 @@ function Restaurants() {
   return (<section className="wrap"><h2>Restaurants near you</h2>
     <input className="search" placeholder="Search restaurants or food" value={q} onChange={e => setQ(e.target.value)} aria-label="Search" />
     <div className="trio">{list.map(r => (
-      <a key={r.id} href={"#restaurant-" + r.id} className="card"><div className="art short" style={{ background: ["#FFC700", "#C6F0E1", "#DAD3F7"][r.id % 3] }} />
+      <a key={r.id} href={"#restaurant-" + r.id} className="card"><div className="art short" style={{ padding: 0 }}><img className="card-img" src={foodImg(r)} alt={r.name} loading="lazy" onError={(e) => { e.target.style.display = "none"; }} /></div>
         <div className="pad"><h3>{r.name}</h3><p>{r.cuisine} · {r.area}</p><p>★ {r.rating ?? "New"} · {r.eta ?? "30 min"}</p></div></a>))}</div></section>);
 }
 
