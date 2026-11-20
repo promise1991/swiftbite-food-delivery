@@ -1,0 +1,11 @@
+# Loki + Promtail - logs
+# helm install loki grafana/loki-stack -n monitoring -f k8s/observability/values-loki.yaml
+loki:
+  enabled: true
+promtail:
+  enabled: true
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push
+grafana:
+  enabled: false
