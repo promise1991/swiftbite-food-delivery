@@ -1,0 +1,19 @@
+# Prometheus + Grafana stack - kube-prometheus-stack
+# Install on EKS: helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring --create-namespace -f k8s/observability/values-prometheus.yaml
+grafana:
+  enabled: true
+  adminPassword: "swiftbite-demo-123"
+  service:
+    type: LoadBalancer
+  dashboards:
+    default:
+      swiftbite-orders:
+        gnetId: 0
+        revision: 1
+        datasource: Prometheus
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    serviceMonitorSelectorNilUsesHelmValues: false
+alertmanager:
+  enabled: true
