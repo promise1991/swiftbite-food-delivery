@@ -24,9 +24,9 @@ echo "Creating docker-registry secret 'ecr-secret'..."
 kubectl delete secret ecr-secret -n $NAMESPACE 2>/dev/null || true
 
 # ECR password expires every 12 hours - this is why prod uses helpers
-ECR_PASSWORD=$(【entity-aws¦canonical_name=aws】 ecr get-login-password --region $REGION)
+ECR_PASSWORD=$(aws ecr get-login-password --region $REGION)
 
-kubectl create secret docker-registry ecr-secret --docker-server=$REGISTRY --docker-username=【entity-AWS¦canonical_name=aws】 --docker-password=$ECR_PASSWORD --docker-email=no@email.com -n $NAMESPACE
+kubectl create secret docker-registry ecr-secret --docker-server=$REGISTRY --docker-username=AWS --docker-password=$ECR_PASSWORD --docker-email=no@email.com -n $NAMESPACE
 
 echo "Secret created. It will expire in 12h."
 echo "For auto-refresh in prod, install: https://github.com/upmc-enterprises/registry-creds or use EKS IRSA"
