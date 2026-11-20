@@ -1,0 +1,34 @@
+name: CD - Deploy to EKS
+on:
+  push:
+    branches: [staging, production]
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  deploy:
+    name: Deploy to ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::293160392232:role/github-actions-swiftbite-deploy
+          aws-region: eu-north-1
+      - name: Connect to EKS
+        run: |
+          aws eks update-kubeconfig --name swiftbite-eks --region eu-north-1
+          kubectl get nodes
+      - name: Deploy SwiftBite manifests
+        run: |
+          kubectl apply -f k8s/security/ -n swiftbitens || kubectl apply -f k8s/security/
+          kubectl apply -f k8s/hpa.yaml -n swiftbitens
+          echo "CD deploy done"
+      - name: Verify pods
+        run: |
+          kubectl get pods -n swiftbitens
+          kubectl get hpa -n swiftbitens
