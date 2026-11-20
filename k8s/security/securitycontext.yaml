@@ -1,0 +1,13 @@
+# SecurityContext - runAsNonRoot, readOnlyRootFilesystem, drop ALL caps
+# Apply as patch: kubectl patch deployment frontend -n swiftbitens --patch-file k8s/security/securitycontext.yaml
+# For Helm, add this to each deployment's spec.template.spec:
+# securityContext:
+#   runAsNonRoot: true
+#   runAsUser: 10001
+#   fsGroup: 10001
+#   seccompProfile: { type: RuntimeDefault }
+# containers[].securityContext:
+#   allowPrivilegeEscalation: false
+#   readOnlyRootFilesystem: true
+#   runAsNonRoot: true
+#   capabilities: { drop: ["ALL"] }
