@@ -1,0 +1,52 @@
+name: CI - DevSecOps
+
+on:
+  pull_request:
+    branches: [main, staging, production]
+  push:
+    branches: [main, staging]
+
+jobs:
+  gitleaks:
+    name: Gitleaks - Secrets Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trivy:
+    name: Trivy - Image Scan (frontend + order)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build frontend image for scan
+        run: docker build -t swiftbite-frontend:ci ./swiftbite/frontend || true
+      - name: Trivy scan
+        run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 0 --severity HIGH,CRITICAL swiftbite-frontend:ci || true
+
+  tfsec:
+    name: tfsec - Terraform Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: terraform
+          soft_fail: true
+
+  terraform-validate:
+    name: Terraform fmt + validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: Terraform fmt check
+        run: cd terraform && terraform fmt -check -recursive || true
+      - name: Terraform init + validate
+        run: cd terraform && terraform init -upgrade -backend=false && terraform validate

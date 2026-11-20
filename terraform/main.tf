@@ -44,18 +44,22 @@ module "eks" {
 
 # RDS Postgres - db.t3.micro, plan only (for prod, data chart goes away)
 resource "aws_db_instance" "postgres" {
-  identifier             = "swiftbite-postgres"
-  engine                 = "postgres"
-  engine_version         = "15"
-  instance_class         = "db.t3.micro"
-  allocated_storage      = 20
-  db_name                = "swiftbite"
-  username               = "swiftbite_admin"
-  password               = var.db_password
-  db_subnet_group_name   = module.vpc.database_subnet_group_name
-  vpc_security_group_ids = [module.vpc.default_security_group_id]
-  skip_final_snapshot    = true
-  tags                   = { Project = "swiftbite" }
+  identifier                          = "swiftbite-postgres"
+  engine                              = "postgres"
+  engine_version                      = "15"
+  instance_class                      = "db.t3.micro"
+  allocated_storage                   = 20
+  storage_encrypted                   = true
+  backup_retention_period             = 7
+  deletion_protection                 = true
+  iam_database_authentication_enabled = true
+  db_name                             = "swiftbite"
+  username                            = "swiftbite_admin"
+  password                            = var.db_password
+  db_subnet_group_name                = module.vpc.database_subnet_group_name
+  vpc_security_group_ids              = [module.vpc.default_security_group_id]
+  skip_final_snapshot                 = true
+  tags                                = { Project = "swiftbite" }
 }
 
 # S3 for frontend assets / Terraform state
@@ -65,3 +69,23 @@ resource "aws_s3_bucket" "assets" {
 }
 
 data "aws_caller_identity" "current" {}
+
+resource "aws_s3_bucket_public_access_block" "assets" {
+  bucket                  = aws_s3_bucket.assets.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+resource "aws_s3_bucket_server_side_encryption_configuration" "assets" {
+  bucket = aws_s3_bucket.assets.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+resource "aws_s3_bucket_versioning" "assets" {
+  bucket = aws_s3_bucket.assets.id
+  versioning_configuration { status = "Enabled" }
+}
