@@ -27,6 +27,9 @@ jobs:
         run: docker build -t swiftbite-frontend:ci ./swiftbite/frontend || true
       - name: Trivy scan
         run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 0 --severity HIGH,CRITICAL swiftbite-frontend:ci || true
+
+  tfsec:
+    name: tfsec - Terraform Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,17 +50,3 @@ jobs:
         run: cd terraform && terraform fmt -check -recursive || true
       - name: Terraform init + validate
         run: cd terraform && terraform init -upgrade -backend=false && terraform validate
-
-  # OIDC to AWS - no static keys, only on main push (EKS deploy later)
-  # oidc-deploy:
-  #   if: github.ref == 'refs/heads/main'
-  #   permissions:
-  #     id-token: write
-  #     contents: read
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-  #         aws-region: eu-north-1
