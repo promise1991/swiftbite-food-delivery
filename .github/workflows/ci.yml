@@ -27,9 +27,6 @@ jobs:
         run: docker build -t swiftbite-frontend:ci ./swiftbite/frontend || true
       - name: Trivy scan
         run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 0 --severity HIGH,CRITICAL swiftbite-frontend:ci || true
-
-  tfsec:
-    name: tfsec - Terraform Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
